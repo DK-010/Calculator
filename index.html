@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="calculator">
+        <input type="text" id="display" disabled>
+        <div class="button-grid">
+
+            <!-- Top row button -->
+            <div class="top-row" id="top-row">
+                <button id="clear" class="clear">CE/ON</button>
+                <button id="history" class="history">Check &rarr;</button>
+                <button id="backspace" class="backspace">&larr;</button>
+                <button id="off" class="off">OFF</button>
+            </div>
+        
+                <div id="bottom-row">
+                <!-- Memory buttons -->
+                <button class="memory" id="memory-clear">MC</button>
+                <button class="memory" id="memory-recall">MR</button>
+                <button class="memory" id="memory-add">M+</button>
+                <button class="memory" id="memory-subtract">M-</button>
+
+                <!-- Digit and Operator buttons -->
+                <button class="digit">7</button>
+                <button class="digit">8</button>
+                <button class="digit">9</button>
+                <button class="operator">/</button>
+
+                <button class="digit">4</button>
+                <button class="digit">5</button>
+                <button class="digit">6</button>
+                <button class="operator">x</button>
+
+                <button class="digit">1</button>
+                <button class="digit">2</button>
+                <button class="digit">3</button>
+                <button class="operator">-</button>
+
+                <button class="digit">0</button>
+                <button id="dot" class="dot">.</button>
+                <!-- Equals button -->
+                <button id="equals" class="equals">=</button>
+                <button class="operator">+</button>
+                
+                <!-- Percentage and Parentheses -->
+                <button id="percentage" class="percentage">%</button>
+                <button class="parentheses" data-paren="(">(</button>
+                <button class="parentheses" data-paren=")">)</button>
+
+                <!-- Scientific function buttons -->
+                <button class="function" data-func="sin">sin</button>
+                <button class="function" data-func="cos">cos</button>
+                <button class="function" data-func="tan">tan</button>
+                <button class="function" data-func="log">log</button>
+                <button class="function" data-func="sqrt">√</button>
+                <button class="function" data-func="pow">x^y</button>
+                <button class="function" data-func="exp">exp</button>
+                <button class="function" data-func="log10">log10</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

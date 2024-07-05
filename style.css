@@ -1,0 +1,147 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    margin: 0;
+    /* overflow: hidden; */
+}
+
+#calculator {
+    margin: 20px;
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#display {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: right;
+    padding: 10px;
+    font-size: 24px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button#history,
+#backspace {
+    width: 90px;
+}
+
+button#clear,
+#off {
+    width: 80px;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button.operator {
+    background-color: #da5ec5;
+}
+
+button.operator:hover {
+    background-color: #a95399;
+}
+
+button.function {
+    background-color: #17b870;
+}
+
+button.function:hover {
+    background-color: #118b58;
+}
+
+button#clear,
+#off,
+#history,
+#backspace {
+    background-color: #dc3556;
+}
+
+button#clear:hover,
+button#off:hover,
+button#history:hover,
+button#backspace:hover {
+    background-color: #af1e2c;
+}
+
+
+.top-row {
+    grid-column: span 4;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 5px;
+    margin-bottom: 10px;
+}
+
+#bottom-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 15px;
+    justify-items: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    #calculator {
+        padding: 15px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    button {
+        height: 45px;
+        font-size: 14px;
+    }
+
+    button#history,
+    button#backspace,
+    button#clear,
+    button#off {
+        width: 80px;
+    }
+
+    #bottom-row {
+        padding: 15px;
+        grid-gap: 10px;
+    }
+}
