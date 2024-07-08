@@ -91,8 +91,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adding event listeners to operator buttons
     operators.forEach(operator => {
         operator.addEventListener('click', function () {
+            const operatorValue= this.getAttribute('data-operator');
             if (currentExpression && !awaitingNewOperand) {
-                handleButtonClick(` ${this.innerText} `);
+                handleButtonClick(` ${operatorValue} `);
+                // handleButtonClick(` ${this.innerText} `);
                 awaitingNewOperand = true;
                 console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
             }
@@ -292,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adding keyboard support
     document.addEventListener('keydown', function(event) {
         const key = event.key;
-        // if (!calculatorOn) return;
+        if (!calculatorOn) return;
         if (!isNaN(key)) {
             // If the key is a digit
             handleButtonClick(key);
