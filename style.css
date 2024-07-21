@@ -6,7 +6,7 @@ body {
     min-height: 100vh;
     background-color: #f4f4f4;
     margin: 0;
-    /* overflow: hidden; */
+    
 }
 
 #calculator {
@@ -23,6 +23,47 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+/* Light mode */
+body.light-mode {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+#calulator.light-mode {
+    background-color: #fff;
+    color: #000;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background-color: #181818;
+    color: #fff;
+  }
+  
+  #calculator.dark-mode {
+    background-color: #333;
+    color: #fff;
+  }
+  
+/* Toggle button styles */
+#theme-toggle {
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#theme-toggle:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
 #display {
@@ -119,6 +160,47 @@ button#backspace:hover {
     background-color: #fff;
     border: 2px solid #ddd;
     border-radius: 8px;
+}
+
+/* Dark Mode specific styles */
+body.dark-mode #display {
+    background-color: #222;
+    color: #fff;
+}
+
+body.dark-mode .button {
+    background-color: #555;
+    color: #fff;
+}
+
+body.dark-mode button.operator {
+    background-color: #d15e8b;
+}
+
+body.dark-mode button.operator:hover {
+    background-color: #a5446f;
+}
+
+body.dark-mode button.function {
+    background-color: #1a9c5e;
+}
+
+body.dark-mode button.function:hover {
+    background-color: #147e4a;
+}
+
+body.dark-mode button#clear,
+body.dark-mode button#off,
+body.dark-mode button#history,
+body.dark-mode button#backspace {
+    background-color: #c32d53;
+}
+
+body.dark-mode button#clear:hover,
+body.dark-mode button#off:hover,
+body.dark-mode button#history:hover,
+body.dark-mode button#backspace:hover {
+    background-color: #ab1e2d;
 }
 
 @media (max-width: 600px) {

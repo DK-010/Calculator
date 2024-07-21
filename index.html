@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <div id="calculator">
+    <div id="calculator" class="light-mode">
+        <button id="theme-toggle">Toggle Theme</button>
         <input type="text" id="display" disabled>
         <div class="button-grid">
 
@@ -49,6 +50,7 @@
                 <button class="operator" data-operator="+">+</button>
                 
                 <!-- Percentage and Parentheses -->
+                <button id="double-zero" class="double-zero">00</button>
                 <button id="percentage" class="percentage">%</button>
                 <button class="parentheses" data-paren="(">(</button>
                 <button class="parentheses" data-paren=")">)</button>

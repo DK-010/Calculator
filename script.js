@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const memoryButtons = document.querySelectorAll('.memory');
     const dotButton = document.getElementById('dot');
     const percentageButton = document.getElementById('percentage');
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const doubleZeroButton = document.getElementById('double-zero');
 
     let currentExpression = '';
     let awaitingNewOperand = true;
@@ -28,6 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(script);
     }
 
+    doubleZeroButton.addEventListener('click', function() {
+        handleButtonClick('00');
+    });
+
+    // Function to format numbers woth commas
+    function formatNumberWithCommas(number) {
+        var parts = number.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+      
+
     // Function to add an entry to history
     function addToHistory(expression, result) {
         history.push({ expression, result });
@@ -36,6 +50,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         console.log(`Expression: ${expression}, Result: ${result}`);
     }
+
+    // Function to toggle theme
+    themeToggleButton.addEventListener('click', () => {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+
+        if (isDarkMode) {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+            document.querySelector('.calculator').classList.remove('dark-mode');
+            document.querySelector('.calculator').classList.add('light-mode');
+        } else {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+            document.querySelector('.calculator').classList.remove('light-mode');
+            document.querySelector('.calculator').classList.add('dark-mode');
+        }
+    });
 
      // Function to display history
         historyButton.addEventListener('click', function() {
@@ -48,12 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to perform calculations
     function calculate() {
         try {
-            let result = math.evaluate(currentExpression);
+            // console.log(`Calculating: ${currentExpression}`);
+            let result = math.evaluate(currentExpression.replace(/,/g, ''));
             if (!isFinite(result)) {
                 throw new Error('Invalid operation');
             }
             addToHistory(currentExpression, result);
-            currentExpression = result.toString();
+            currentExpression = formatNumberWithCommas(result.toString());
             updateDisplay(currentExpression);
             awaitingNewOperand = false;
             console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
@@ -67,17 +99,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update the display
     function updateDisplay(value) {
-        display.value = value;
+        display.value = formatNumberWithCommas(value);
     }
 
     // Function to handle button clicks
     function handleButtonClick(value) {
-        if (!calculatorOn) return; // Ignore input if calculator is off
-        currentExpression += value;
+        if (!calculatorOn) return;
+    
+        // Special handling for "00"
+        if (value === '00') {
+            // If the current expression is empty or ends with an operator, treat "00" as a standalone entry
+            if (currentExpression.trim() === '' || /[\+\-\*\/]$/.test(currentExpression)) {
+                currentExpression += '00';
+            } else {
+                // Append "00" to the last number if it's valid
+                let parts = currentExpression.split(/([+\-*/])/); // Split by operators
+                let lastPart = parts.pop().trim(); // Get last operand
+    
+                if (lastPart === '') {
+                    // If the last part is empty, just add "00"
+                    currentExpression += '00';
+                } else {
+                    // Append "00" to the last number
+                    parts.push(lastPart + '00');
+                    currentExpression = parts.join('');
+                }
+            }
+        } else {
+            // Handle other values (numbers, operators, etc.)
+            currentExpression += value;
+        }
+    
         updateDisplay(currentExpression);
         awaitingNewOperand = false;
         console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
     }
+    
 
     // Adding event listeners to digit buttons
     digits.forEach(digit => {
@@ -94,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const operatorValue= this.getAttribute('data-operator');
             if (currentExpression && !awaitingNewOperand) {
                 handleButtonClick(` ${operatorValue} `);
-                // handleButtonClick(` ${this.innerText} `);
                 awaitingNewOperand = true;
                 console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
             }
@@ -135,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         display.value = '0';
         setTimeout(() => {
             display.value = '';
-        }, 2000); // Clear the display after 2 seconds
+        }, 2000);
     }
  });
 
@@ -150,32 +206,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
         // Backspace button functionality
-    backspaceButton.addEventListener('click', function() {
-    // Start from the end of currentExpression
-    let lastIndex = currentExpression.length - 1;
-    
-    // Loop backwards to find the index of the last non-space character or operator
-    while (lastIndex >= 0) {
-        if (currentExpression[lastIndex] !== ' ') {
-            break; // Exit loop if a non-space character is found
-        }
-        lastIndex--; // Move left in the string to skip spaces
-    }
-
-    // Find the next meaningful character or operator to delete
-    while (lastIndex >= 0) {
-        if (currentExpression[lastIndex] === ' ') {
-            lastIndex--; // Skip any remaining spaces
-        } else {
-            break; // Exit loop when a non-space character/operator is found
-        }
-    }
-    
-        // Remove the last non-space character and update display
-        currentExpression = currentExpression.slice(0, lastIndex);
-        updateDisplay(currentExpression);
-        console.log(`Current Expression: ${currentExpression}`);
-    });
+        backspaceButton.addEventListener('click', function() {
+            let lastIndex = currentExpression.length - 1;
+            
+            while (lastIndex >= 0) {
+                if (currentExpression[lastIndex] !== ' ') {
+                    break;
+                }
+                lastIndex--;
+            }
+        
+            while (lastIndex >= 0) {
+                if (currentExpression[lastIndex] === ' ') {
+                    lastIndex--;
+                } else {
+                    break;
+                }
+            }
+            
+                // Remove the last non-space character and update display
+                currentExpression = currentExpression.slice(0, lastIndex);
+                updateDisplay(currentExpression);
+                console.log(`Current Expression: ${currentExpression}`);
+            });
 
     // Dot button functionality
     dotButton.addEventListener('click', function() {
@@ -186,10 +239,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Percentage button functionality
     percentageButton.addEventListener('click', function() {
-        // if (!calculatorOn) return; // Ignore input if calculator is off
         try {
-            let result = math.evaluate(currentExpression) / 100;
-            currentExpression = result.toString();
+            let result = math.evaluate(currentExpression.replace(/,/g, '')) / 100;
+            currentExpression = formatNumberWithCommas(result.toString());
             updateDisplay(currentExpression);
             awaitingNewOperand = true;
             console.log(`Percentage Result: ${result}`);
@@ -211,13 +263,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to handle memory functions
     function handleMemoryFunction(func) {
         // if (!calculatorOn) return; 
-        let currentValue = parseFloat(display.value);
+        let currentValue = parseFloat(display.value.replace(/,/g, '')); // Remove commas for memory operations
         switch (func) {
             case 'memory-clear':
                 memory = 0;
                 break;
             case 'memory-recall':
-                updateDisplay(memory);
+                updateDisplay(formatNumberWithCommas(memory));
                 currentExpression = memory.toString();
                 break;
             case 'memory-add':
@@ -236,60 +288,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to apply scientific functions
     function applyFunction(func) {
-        // if (!calculatorOn) return;
-        let value = parseFloat(display.value);
-        if (isNaN(value)) {
-        console.log('Error: Invalid number');
-        return;
-    }
-        let result;
-        switch (func) {
-            case 'sin':
-                result = `sin(${value}) = ${Math.sin(value)}`;
-                break;
-            case 'cos':
-                result = `cos(${value}) = ${Math.cos(value)}`;
-                break;
-            case 'tan':
-                result = `tan(${value}) = ${Math.tan(value)}`;
-                break;
-            case 'log':
-                result = `log(${value}) = ${Math.log(value)}`;
-                break;
-            case 'log10':
-                result = `log10(${value}) = ${Math.log10(value)}`;
-                break;
-            case 'sqrt':
-                result = `√(${value}) = ${Math.sqrt(value)}`;
-                break;
-            case 'exp':
-                result = `exp(${value}) = ${Math.exp(value)}`;
-                break;
-            case 'pow':
-                let exponent = parseFloat(prompt('Enter the exponent:'));
-                if (isNaN(exponent)) {
-                    result = 'Error';
-                } else {
-                    result = `${value}^${exponent} = ${Math.pow(value, exponent)}`;
+        try{
+            let value = parseFloat(display.value.replace(/,/g, ''));
+            let result;
+            switch (func) {
+                case 'sin':
+                    result = `sin(${value}) = ${Math.sin(value)}`;
+                    break;
+                case 'cos':
+                    result = `cos(${value}) = ${Math.cos(value)}`;
+                    break;
+                case 'tan':
+                    result = `tan(${value}) = ${Math.tan(value)}`;
+                    break;
+                case 'log':
+                    result = `log(${value}) = ${Math.log(value)}`;
+                    break;
+                case 'log10':
+                    result = `log10(${value}) = ${Math.log10(value)}`;
+                    break;
+                case 'sqrt':
+                    result = `√(${value}) = ${Math.sqrt(value)}`;
+                    break;
+                case 'exp':
+                    result = `exp(${value}) = ${Math.exp(value)}`;
+                    break;
+                case 'pow':
+                    let exponent = parseFloat(prompt('Enter the exponent:'));
+                    result = Math.pow(value, exponent);
+                    break;
+                default:
+                    throw new Error('Unknown function');
                 }
-                break;
-            default:
-                result = 'Error';
-                break;
-        }
-        if (result === 'Error') {
-        updateDisplay(result);
-        currentExpression = '';
-        awaitingNewOperand = true;
-        console.log(`Error: ${result}`);
-    } else {
-        updateDisplay(result);
-        const splitResult = result.split('=');
-        currentExpression = splitResult.length > 1 ? splitResult[1].trim() : '';
-        awaitingNewOperand = true;
-        console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
+                display.value = result;
+                currentExpression = result.toString();
+                awaitingNewOperand = true;
+                console.log(`Function Result: ${result}`);
+            } catch (error) {
+                display.value = 'Error';
+                currentExpression = '';
+                awaitingNewOperand = true;
+                console.log(`Error: ${error.message}`);
+             }
     }
-}
 
     // Adding keyboard support
     document.addEventListener('keydown', function(event) {
@@ -305,10 +346,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 awaitingNewOperand = false;
                 console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
             }
-        } else if (key === 'Enter') {
+        } else if (event.key === 'Enter' || key === '=') {
             // If the key is Enter
             calculate();
+            console.log(`Current Expression after calculate: ${currentExpression}`);
             updateDisplay(currentExpression);
+        } else if (key === 'Escape') {
+            // If the key is Escape
+            clearCalculator();
+            updateDisplay('0');
+            setTimeout(() => {
+                updateDisplay('');
+            }, 2000);
         } else if (key === 'Backspace') {
             // If the key is Backspace
             let lastIndex = currentExpression.length -1;
@@ -320,28 +369,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             while(lastIndex >= 0) {
                 if (currentExpression[lastIndex] === ' ') {
-                    lastIndex--; // Skip any remaining spaces
+                    lastIndex--;
             } else {
                 break;
             }
         }
             currentExpression = currentExpression.slice(0, lastIndex);
             updateDisplay(currentExpression);
-        } else if (key === 'Escape') {
-            // If the key is Escape
-            clearCalculator();
-            updateDisplay('0');
-            setTimeout(() => {
-                updateDisplay('');
-            }, 2000);
+    } else if (key === '.') {
+        if (!currentExpression.includes('.')) {
+            handleButtonClick('.');
+        }
+    } else if (key === 'p') {
+        let currentValue = parseFloat(display.value.replace(/,/g, ''));
+        display.value = formatNumberWithCommas((currentValue / 100).toString());
+        currentExpression = display.value;
         } else if (key === '(' || key === ')') {
             // If the key is a parenthesis
             handleButtonClick(key);
-        } else if (key === '.') {
-            // Dot functionality
-            if (!currentExpression.includes('.')) {
-                handleButtonClick(key);
-            }
         } else if (key === 'c' || key === 'C') {
             // Memory Clear
             handleMemoryFunction('memory-clear');
@@ -351,25 +396,29 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (key === 'm' || key === 'M') {
             // Memory Add
             handleMemoryFunction('memory-add');
-        } else if (key === 'n' || key === 'N') {
+        } else if (key === 's' || key === 'S') {
             // Memory Subtract
             handleMemoryFunction('memory-subtract');
         } else if (key === '%') {
-            // Percentage functionality
-            let value = parseFloat(currentExpression);
-            if (!isNaN(value)) {
-                value /= 100;
-                currentExpression = value.toString();
-                updateDisplay(currentExpression);
+            try {
+            let result = math.evaluate(currentExpression) / 100;
+            currentExpression = result.toString();
+            updateDisplay(currentExpression);
+            awaitingNewOperand = true;
+            } catch (error) {
+                display.value = 'Error';
+                currentExpression = '';
+                awaitingNewOperand = true;
+                console.log(`Error: ${error.message}`);
             }
+        } else if (key === '00') {
+            handleButtonClick(key);
         }
-        console.log(`Key Pressed: ${key}`);
-        console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
     });
 
     // Load math.js and initialize calculator
     loadMathJS(function() {
         console.log('math.js loaded and ready');
-        // You can put any additional initialization code here if needed
     });
 });
+
