@@ -1,1 +1,1 @@
-This Calculator project is done by HTML, CSS and JavaScript. 
+This Calculator project is done by HTML, CSS and JavaScript.

@@ -58,15 +58,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isDarkMode) {
             document.body.classList.remove('dark-mode');
             document.body.classList.add('light-mode');
-            document.querySelector('.calculator').classList.remove('dark-mode');
-            document.querySelector('.calculator').classList.add('light-mode');
+            const calculator = document.getElementById('.calculator');
+            if (calculator) {
+                calculator.classList.remove('dark-mode');
+                calculator.classList.add('light-mode');
+            }
         } else {
             document.body.classList.remove('light-mode');
             document.body.classList.add('dark-mode');
-            document.querySelector('.calculator').classList.remove('light-mode');
-            document.querySelector('.calculator').classList.add('dark-mode');
+            const calculator = document.getElementById('.calculator');
+        if (calculator) {
+            calculator.classList.remove('light-mode');
+            calculator.classList.add('dark-mode');
         }
-    });
+    }
+});
 
      // Function to display history
         historyButton.addEventListener('click', function() {
