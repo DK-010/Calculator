@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to toggle theme
-    themeToggleButton.addEventListener('click', () => {
+    function toggleTheme() {
         const isDarkMode = document.body.classList.contains('dark-mode');
 
         if (isDarkMode) {
@@ -71,24 +71,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 calculator.classList.add('dark-mode');
             }
         }
+    }
+
+    // Handle toggle button click
+    themeToggleButton.addEventListener('click', () => {
+        toggleTheme();
+        // Save theme to localStorage when changed
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
+        localStorage.setItem('theme', currentTheme);
     });
 
-    // Preserve the theme on page reload
+    // Initial theme setup based on localStorage
     window.addEventListener('load', () => {
-        const theme = localStorage.getItem('theme');
-        if (theme) {
-            document.body.classList.add(theme);
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
             if (calculator) {
-                calculator.classList.add(theme);
+                calculator.classList.add(savedTheme);
+            }
+        } else {
+            // You can detect the user's system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = prefersDark ? 'dark-mode' : 'light-mode';
+            document.body.classList.add(initialTheme);
+            if (calculator) {
+                calculator.classList.add(initialTheme);
             }
         }
     });
-
-    // Save theme to localStorage when changed
-    themeToggleButton.addEventListener('click', () => {
-        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
-        localStorage.setItem('theme', currentTheme);
-    })
 
      // Function to display history
         historyButton.addEventListener('click', function() {
