@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const dotButton = document.getElementById('dot');
     const percentageButton = document.getElementById('percentage');
     const themeToggleButton = document.getElementById('theme-toggle');
+    const calculator = document.getElementById('.calculator');
     const doubleZeroButton = document.getElementById('double-zero');
 
     let currentExpression = '';
@@ -58,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isDarkMode) {
             document.body.classList.remove('dark-mode');
             document.body.classList.add('light-mode');
-            const calculator = document.getElementById('.calculator');
             if (calculator) {
                 calculator.classList.remove('dark-mode');
                 calculator.classList.add('light-mode');
@@ -66,13 +66,29 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             document.body.classList.remove('light-mode');
             document.body.classList.add('dark-mode');
-            const calculator = document.getElementById('.calculator');
-        if (calculator) {
-            calculator.classList.remove('light-mode');
-            calculator.classList.add('dark-mode');
+            if (calculator) {
+                calculator.classList.remove('light-mode');
+                calculator.classList.add('dark-mode');
+            }
         }
-    }
-});
+    });
+
+    // Preserve the theme on page reload
+    window.addEventListener('load', () => {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+            document.body.classList.add(theme);
+            if (calculator) {
+                calculator.classList.add(theme);
+            }
+        }
+    });
+
+    // Save theme to localStorage when changed
+    themeToggleButton.addEventListener('click', () => {
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
+        localStorage.setItem('theme', currentTheme);
+    })
 
      // Function to display history
         historyButton.addEventListener('click', function() {
@@ -341,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adding keyboard support
     document.addEventListener('keydown', function(event) {
         const key = event.key;
-        if (!calculatorOn) return;
+        // if (!calculatorOn) return;
         if (!isNaN(key)) {
             // If the key is a digit
             handleButtonClick(key);
@@ -352,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 awaitingNewOperand = false;
                 console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
             }
-        } else if (event.key === 'Enter' || key === '=') {
+        } else if (key === 'Enter') {
             // If the key is Enter
             calculate();
             console.log(`Current Expression after calculate: ${currentExpression}`);
