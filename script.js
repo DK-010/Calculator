@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addToHistory(currentExpression, result);
             currentExpression = formatNumberWithCommas(result.toString());
             updateDisplay(currentExpression);
-            awaitingNewOperand = false;
+            awaitingNewOperand = true;
             console.log(`Current Expression: ${currentExpression}, Awaiting New Operand: ${awaitingNewOperand}`);
         } catch (error) {
             display.value = 'Error';
@@ -367,7 +367,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adding keyboard support
     document.addEventListener('keydown', function(event) {
         const key = event.key;
-        // if (!calculatorOn) return;
+        if (key === 'o' || key === 'O') {
+            if (!calculatorOn) {
+                calculatorOn = true;
+                display.value = '0';
+                currentExpression = '';
+                awaitingNewOperand = true;
+            }
+            return;
+        }
+        
+        if (!calculatorOn) return;
         if (!isNaN(key)) {
             // If the key is a digit
             handleButtonClick(key);
@@ -382,9 +392,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // If the key is Enter
             calculate();
             console.log(`Current Expression after calculate: ${currentExpression}`);
-            updateDisplay(currentExpression);
-        } else if (key === 'Escape') {
-            // If the key is Escape
+            // updateDisplay(currentExpression);
+        } else if (key === 'Escape' || key === 'c' || key === 'C') {
+            // If the key is Escape or 'c' or 'C'
+            event.preventDefault();
             clearCalculator();
             updateDisplay('0');
             setTimeout(() => {
@@ -444,7 +455,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(`Error: ${error.message}`);
             }
         } else if (key === '00') {
-            handleButtonClick(key);
+            handleButtonClick('00');
+        } else if (key === 'f' || key === 'F') {
+            // Turn calculaator OFF
+            clearCalculator();
+            display.value = 'OFF';
+            calculatorOn = false;
+            setTimeout(() => {
+                display.value = '';
+            }, 2000);
         }
     });
 
