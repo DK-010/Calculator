@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
     const display = document.getElementById('display');
     const digits = document.querySelectorAll('.digit');
     const operators = document.querySelectorAll('.operator');
@@ -7,19 +8,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const equalsButton = document.getElementById('equals');
     const clearButton = document.getElementById('clear');
     const offButton = document.getElementById('off');
-    const historyButton = document.getElementById('history');
+    const checkButton = document.getElementById('check');
     const backspaceButton = document.getElementById('backspace');
     const memoryButtons = document.querySelectorAll('.memory');
     const dotButton = document.getElementById('dot');
     const percentageButton = document.getElementById('percentage');
     const themeToggleButton = document.getElementById('theme-toggle');
-    const calculator = document.getElementById('.calculator');
+    const historyToggleButton = document.getElementById('history-toggle');
+    const historyView = document.getElementById('history-view');
+    const historyContent = document.getElementById('history-content');
+    const clearHistoryButton = document.getElementById('clear-history');
+    const menuToggleButton = document.getElementById('menu-toggle');
+    const menuContent =  document.getElementById('menu-content');
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+    const calculator = document.getElementById('calculator');
     const doubleZeroButton = document.getElementById('double-zero');
 
     let currentExpression = '';
     let awaitingNewOperand = true;
     let memory = 0;
-    let history = [];
     let calculatorOn = true;
 
     // Load math.js dynamically
@@ -35,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         handleButtonClick('00');
     });
 
-    // Function to format numbers woth commas
+    // Function to format numbers with commas
     function formatNumberWithCommas(number) {
         var parts = number.toString().split(".");
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -45,10 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to add an entry to history
     function addToHistory(expression, result) {
-        history.push({ expression, result });
-        if (history.length > 10) {
+        // history.push({ expression, result });
+        history.push({ expression: formatNumberWithCommas(expression), result: formatNumberWithCommas(result) });
+        if (history.length > 20) {
             history.shift();
         }
+        updateHistoryView();
         console.log(`Expression: ${expression}, Result: ${result}`);
     }
 
@@ -63,6 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 calculator.classList.remove('dark-mode');
                 calculator.classList.add('light-mode');
             }
+            if (historyView) {
+                historyView.classList.remove('dark-mode');
+                historyView.classList.add('light-mode');
+            }
+            themeToggleButton.innerHTML = '<i class = "fas fa-sun"></i>';
         } else {
             document.body.classList.remove('light-mode');
             document.body.classList.add('dark-mode');
@@ -70,6 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 calculator.classList.remove('light-mode');
                 calculator.classList.add('dark-mode');
             }
+            if (historyView) {
+                historyView.classList.remove('light-mode');
+                historyView.classList.add('dark-mode');
+            }
+            themeToggleButton.innerHTML = '<i class = "fas fa-moon"></i>';
         }
     }
 
@@ -89,6 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (calculator) {
                 calculator.classList.add(savedTheme);
             }
+            if (historyView) {
+                historyView.classList.add(savedTheme);
+            }
+            themeToggleButton.innerHTML = savedTheme === 'dark-mode' ? '<i class = "fas fa-moon"></i>' : '<i class = "fas fa-sun"></i>';
         } else {
             // You can detect the user's system preference
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -97,11 +120,81 @@ document.addEventListener('DOMContentLoaded', function() {
             if (calculator) {
                 calculator.classList.add(initialTheme);
             }
+            if (historyView) {
+                historyView.classList.add(initialTheme);
+            }
+            themeToggleButton.innerHTML = initialTheme === 'dark-mode' ? '<i class = "fas fa-moon"></i>' : '<i class = "fas fa-sun"></i>';
         }
+        loadHistory();
     });
 
-     // Function to display history
-        historyButton.addEventListener('click', function() {
+    // Update the history view content
+    function updateHistoryView() {
+        try {
+            historyContent.innerHTML = '';
+            history.forEach(entry => {
+                if (entry && entry.expression && entry.result !== undefined) {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.textContent = `${entry.expression} = ${entry.result}`;
+                    historyContent.appendChild(entryDiv);
+                }
+        
+             });
+        } catch (error) {
+            console.error ('Error updating history view:', error);
+        }
+    }
+
+    // Event listeneer for history toggle button
+    historyToggleButton.addEventListener('click', toggleHistory);
+
+
+    // Toggle the history view
+        function toggleHistory() {
+       if (historyView.classList.contains('hidden')){
+            historyView.classList.remove('hidden');
+            calculator.classList.add('hidden');
+            updateHistoryView();
+       } else {
+        historyView.classList.add('hidden');
+        calculator.classList.remove('hidden');
+       }
+    }
+
+    // Save history to localStorage
+function saveHistory() {
+    localStorage.setItem('history', JSON.stringify(history));
+}
+
+// Load history from localStorage
+function loadHistory() {
+    const savedHistory = localStorage.getItem('history');
+    if (savedHistory) {
+        history = JSON.parse(savedHistory);
+        updateHistoryView();
+    }
+}
+
+// Clear history function
+function clearHistory() {
+    history = [];
+    updateHistoryView();
+    saveHistory();
+}
+
+// Event listener for clearing history
+clearHistoryButton.addEventListener('click', clearHistory);
+
+// Call loadHistory when the page loads
+loadHistory();
+
+// Function to menu-toggle
+menuToggleButton.addEventListener('click', () =>{
+    menuContent.classList.toggle('show');
+})
+
+     // Function to display check
+        checkButton.addEventListener('click', function() {
             if (history.length > 0) {
                 const lastEntry = history[history.length - 1];
                 display.value = `${lastEntry.expression} = ${lastEntry.result}`;
@@ -111,7 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to perform calculations
     function calculate() {
         try {
-            // console.log(`Calculating: ${currentExpression}`);
             let result = math.evaluate(currentExpression.replace(/,/g, ''));
             if (!isFinite(result)) {
                 throw new Error('Invalid operation');
@@ -273,8 +365,10 @@ document.addEventListener('DOMContentLoaded', function() {
     percentageButton.addEventListener('click', function() {
         try {
             let result = math.evaluate(currentExpression.replace(/,/g, '')) / 100;
+            let expression = currentExpression + " / 100";
             currentExpression = formatNumberWithCommas(result.toString());
             updateDisplay(currentExpression);
+            addToHistory(expression, result);
             awaitingNewOperand = true;
             console.log(`Percentage Result: ${result}`);
         } catch (error) {
@@ -355,6 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 display.value = result;
                 currentExpression = result.toString();
                 awaitingNewOperand = true;
+                addToHistory(currentExpression, result);
                 console.log(`Function Result: ${result}`);
             } catch (error) {
                 display.value = 'Error';
@@ -392,9 +487,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // If the key is Enter
             calculate();
             console.log(`Current Expression after calculate: ${currentExpression}`);
-            // updateDisplay(currentExpression);
-        } else if (key === 'Escape' || key === 'c' || key === 'C') {
-            // If the key is Escape or 'c' or 'C'
+            updateDisplay(currentExpression);
+        } else if (key === 'Escape') {
+            // If the key is Escape
             event.preventDefault();
             clearCalculator();
             updateDisplay('0');
@@ -430,13 +525,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (key === '(' || key === ')') {
             // If the key is a parenthesis
             handleButtonClick(key);
-        } else if (key === 'c' || key === 'C') {
+        } else if (key === 'e' || key === 'E') {
             // Memory Clear
             handleMemoryFunction('memory-clear');
         } else if (key === 'r' || key === 'R') {
             // Memory Recall
             handleMemoryFunction('memory-recall');
-        } else if (key === 'm' || key === 'M') {
+        } else if (key === 'a' || key === 'A') {
             // Memory Add
             handleMemoryFunction('memory-add');
         } else if (key === 's' || key === 'S') {
@@ -457,13 +552,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (key === '00') {
             handleButtonClick('00');
         } else if (key === 'f' || key === 'F') {
-            // Turn calculaator OFF
+            // Turn calculator OFF
             clearCalculator();
             display.value = 'OFF';
             calculatorOn = false;
             setTimeout(() => {
                 display.value = '';
             }, 2000);
+        } else if (key === 'h' || key === 'H') {
+            toggleHistory();
+        } else if (key === 'd' || key === 'D') {
+            toggleTheme();
+        } else if (key === 'c' || key === 'C') {
+            clearHistory();
         }
     });
 

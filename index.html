@@ -5,18 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="favicon_io/android-chrome-192x192.png">
 </head>
 <body>
     <div id="calculator" class="light-mode">
-        <button id="theme-toggle">Toggle Theme</button>
+        <div class="toggle-container">
+            <button id="theme-toggle"><i class="fas fa-sun"></i></button>
+            <button id="history-toggle"><i class="fas fa-history"></i></button>
+        </div>
+            <div class="menu-container">
+                <button id="menu-toggle" class="menu-button"><i class="fas fa-ellipsis-v"></i></button>
+                <div id="menu-content" class="menu-content hidden">
+                    <h3>Keyboard Shortcuts</h3>
+                    <ul>
+                        <li><b>Enter</b>: Equals</li>
+                        <li><b>Backspace</b>: Delete</li>
+                        <li><b>Escape</b>: Clear</li>
+                        <li><b>p or %</b>: Percentage</li>
+                        <li><b>o or O</b>: On</li>
+                        <li><b>f ot F</b>: Off</li>
+                        <li><b>d or D</b>: Theme-change</li>
+                        <li><b>h or H</b>: History</li>
+                    </ul>
+                </div>
+            </div>
+
+        <!-- History View -->
+        <div id="history-view" class="hidden light-mode">
+            <div class="history-header">
+                <h2>History</h2>
+                <button id="clear-history" class="clear-history"><i class="fas fa-trash"></i>Clear</button>
+            </div>
+            <pre id="history-content"></pre>
+        </div>
+
         <input type="text" id="display" disabled>
         <div class="button-grid">
 
             <!-- Top row button -->
             <div class="top-row" id="top-row">
                 <button id="clear" class="clear">CE/ON</button>
-                <button id="history" class="history">Check &rarr;</button>
+                <button id="check" class="history">Check &rarr;</button>
                 <button id="backspace" class="backspace">&larr;</button>
                 <button id="off" class="off">OFF</button>
             </div>

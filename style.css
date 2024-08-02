@@ -6,7 +6,7 @@ body {
     min-height: 100vh;
     background-color: #f4f4f4;
     margin: 0;
-    
+    position: relative;
 }
 
 #calculator {
@@ -23,11 +23,13 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    position: relative;
 }
 
 /* Light mode */
 body.light-mode {
-    background-color: #f0f0f0;
+    background-color: #fff;
     color: #000;
 }
 
@@ -38,7 +40,7 @@ body.light-mode {
 
 /* Dark mode */
 body.dark-mode {
-    background-color: #181818;
+    background-color: #000;
     color: #fff;
   }
   
@@ -46,24 +48,228 @@ body.dark-mode {
     background-color: #333;
     color: #fff;
   }
+
+  #history-view.light-mode {
+    background-color: #f9f9f9;
+    color: #000;
+  }
+
+  #history-view.dark-mode {
+    background-color: #222;
+    color: #fff;
+  }
+
+  button.light-mode {
+    background-color: #e0e0e0;
+    color: #000;
+  }
+
+  button.dark-mode {
+    background-color: #555;
+    color: #fff;
+  }
   
 /* Toggle button styles */
-#theme-toggle {
-    margin-bottom: 15px;
-    width: 100%;
-    padding: 10px;
+.toggle-container {
+    width: auto;
+    padding: 5px;
+    background-color: #007bff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    z-index: 20;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#theme-toggle,
+#history-toggle {
+    width: 30px;
+    height: 30px;
+    padding: 0;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 50%;
+    font-size: 20px;
+    background-color: #fff;
+    color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+}
+
+#theme-toggle:hover,
+#history-toggle:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
+
+/* Menu Styles */
+.menu-container {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 150;
+}
+
+.menu-button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
     background-color: #007bff;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-#theme-toggle:hover {
+.menu-button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
+}
+
+.menu-content {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    width: 200px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border: 1px solid rgba(221, 221, 221, 0.7);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 100;
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.menu-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.menu-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-content li {
+    margin: 5px 0;
+}
+
+/* Show Menu */
+.menu-content.show {
+    display: block;
+}
+
+/* Dark mode Menu Styles */
+body.dark-mode .menu-content {
+    background-color: rgba(51, 51, 51, 0.9);
+    color: #fff;
+    border-color: rgba(136, 136, 136, 0.7);
+}
+
+body.dark-mode .menu-button {
+    background-color: rgba(0, 123, 255, 0.8);
+    color: #fff;
+}
+
+/* History View Styles */
+#history-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    color: #333;  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    z-index: 10;
+    padding: 20px;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+#history-view.hidden {
+    display: none;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* width: 100%; */
+    padding: 0 20px;
+}
+
+.history-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.clear-history {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 60px; 
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.clear-history:hover {
+    background-color: #ff1a1a;
+}
+
+#history-content {
+    width: 95%;
+    margin-left: -40px;
+    max-height: 80%;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-size: 18px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#history-content div {
+    width: 90%;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+#history-content div:last-child {
+    border-bottom: none;
 }
 
 #display {
@@ -71,7 +277,7 @@ body.dark-mode {
     height: 50px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-top: 50px;
     margin-bottom: 20px;
     text-align: right;
     padding: 10px;
@@ -96,7 +302,7 @@ button {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-button#history,
+button#check,
 #backspace {
     width: 90px;
 }
@@ -129,14 +335,14 @@ button.function:hover {
 
 button#clear,
 #off,
-#history,
+#check,
 #backspace {
     background-color: #dc3556;
 }
 
 button#clear:hover,
 button#off:hover,
-button#history:hover,
+button#check:hover,
 button#backspace:hover {
     background-color: #af1e2c;
 }
@@ -191,14 +397,14 @@ body.dark-mode button.function:hover {
 
 body.dark-mode button#clear,
 body.dark-mode button#off,
-body.dark-mode button#history,
+body.dark-mode button#check,
 body.dark-mode button#backspace {
     background-color: #c32d53;
 }
 
 body.dark-mode button#clear:hover,
 body.dark-mode button#off:hover,
-body.dark-mode button#history:hover,
+body.dark-mode button#check:hover,
 body.dark-mode button#backspace:hover {
     background-color: #ab1e2d;
 }
@@ -215,7 +421,7 @@ body.dark-mode button#backspace:hover {
         font-size: 14px;
     }
 
-    button#history,
+    button#check,
     button#backspace,
     button#clear,
     button#off {
