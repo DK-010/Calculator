@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const body = document.body;
     const display = document.getElementById('display');
     const digits = document.querySelectorAll('.digit');
     const operators = document.querySelectorAll('.operator');
@@ -144,7 +143,7 @@ window.addEventListener('load', () => {
         historyContent.appendChild(fragment);
     }
 
-    // Event listeneer for history toggle button
+    // Event listener for history toggle button
     historyToggleButton.addEventListener('click', toggleHistory);
 
 
