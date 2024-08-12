@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearHistoryButton = document.getElementById('clear-history');
     const menuToggleButton = document.getElementById('menu-toggle');
     const menuContent =  document.getElementById('menu-content');
+    const keyboardShortcutsBtn = document.getElementById('keyboard-shortcuts-btn');
+    const keyboardShortcuts = document.getElementById('keyboard-shortcuts');
     let history = JSON.parse(localStorage.getItem('history')) || [];
     const calculator = document.getElementById('calculator');
     const doubleZeroButton = document.getElementById('double-zero');
@@ -62,87 +64,84 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to toggle theme
-    function toggleTheme() {
-        const isDarkMode = document.body.classList.contains('dark-mode');
+function toggleTheme() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
 
-        if (isDarkMode) {
-            document.body.classList.remove('dark-mode');
-            document.body.classList.add('light-mode');
-            if (calculator) {
-                calculator.classList.remove('dark-mode');
-                calculator.classList.add('light-mode');
-            }
-            if (historyView) {
-                historyView.classList.remove('dark-mode');
-                historyView.classList.add('light-mode');
-            }
-            themeToggleButton.innerHTML = '<i class = "fas fa-sun"></i>';
-        } else {
-            document.body.classList.remove('light-mode');
-            document.body.classList.add('dark-mode');
-            if (calculator) {
-                calculator.classList.remove('light-mode');
-                calculator.classList.add('dark-mode');
-            }
-            if (historyView) {
-                historyView.classList.remove('light-mode');
-                historyView.classList.add('dark-mode');
-            }
-            themeToggleButton.innerHTML = '<i class = "fas fa-moon"></i>';
+    if (isDarkMode) {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        if (calculator) {
+            calculator.classList.remove('dark-mode');
+            calculator.classList.add('light-mode');
         }
+        if (historyView) {
+            historyView.classList.remove('dark-mode');
+            historyView.classList.add('light-mode');
+        }
+        themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>'; // Show moon icon for light mode
+    } else {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        if (calculator) {
+            calculator.classList.remove('light-mode');
+            calculator.classList.add('dark-mode');
+        }
+        if (historyView) {
+            historyView.classList.remove('light-mode');
+            historyView.classList.add('dark-mode');
+        }
+        themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>'; // Show sun icon for dark mode
     }
+}
 
-    // Handle toggle button click
-    themeToggleButton.addEventListener('click', () => {
-        toggleTheme();
-        // Save theme to localStorage when changed
-        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
-        localStorage.setItem('theme', currentTheme);
-    });
+// Handle toggle button click
+themeToggleButton.addEventListener('click', () => {
+    toggleTheme();
+    // Save theme to localStorage when changed
+    const currentTheme = document.body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
+    localStorage.setItem('theme', currentTheme);
+});
 
-    // Initial theme setup based on localStorage
-    window.addEventListener('load', () => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.body.classList.add(savedTheme);
-            if (calculator) {
-                calculator.classList.add(savedTheme);
-            }
-            if (historyView) {
-                historyView.classList.add(savedTheme);
-            }
-            themeToggleButton.innerHTML = savedTheme === 'dark-mode' ? '<i class = "fas fa-moon"></i>' : '<i class = "fas fa-sun"></i>';
-        } else {
-            // You can detect the user's system preference
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initialTheme = prefersDark ? 'dark-mode' : 'light-mode';
-            document.body.classList.add(initialTheme);
-            if (calculator) {
-                calculator.classList.add(initialTheme);
-            }
-            if (historyView) {
-                historyView.classList.add(initialTheme);
-            }
-            themeToggleButton.innerHTML = initialTheme === 'dark-mode' ? '<i class = "fas fa-moon"></i>' : '<i class = "fas fa-sun"></i>';
+// Initial theme setup based on localStorage
+window.addEventListener('load', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.body.classList.add(savedTheme);
+        if (calculator) {
+            calculator.classList.add(savedTheme);
         }
-        loadHistory();
-    });
+        if (historyView) {
+            historyView.classList.add(savedTheme);
+        }
+        themeToggleButton.innerHTML = savedTheme === 'dark-mode' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    } else {
+        // You can detect the user's system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = prefersDark ? 'dark-mode' : 'light-mode';
+        document.body.classList.add(initialTheme);
+        if (calculator) {
+            calculator.classList.add(initialTheme);
+        }
+        if (historyView) {
+            historyView.classList.add(initialTheme);
+        }
+        themeToggleButton.innerHTML = initialTheme === 'dark-mode' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    loadHistory();
+});
 
     // Update the history view content
     function updateHistoryView() {
-        try {
-            historyContent.innerHTML = '';
-            history.forEach(entry => {
-                if (entry && entry.expression && entry.result !== undefined) {
-                    const entryDiv = document.createElement('div');
-                    entryDiv.textContent = `${entry.expression} = ${entry.result}`;
-                    historyContent.appendChild(entryDiv);
-                }
-        
-             });
-        } catch (error) {
-            console.error ('Error updating history view:', error);
-        }
+        const fragment = document.createDocumentFragment();
+        history.forEach(entry => {
+            if (entry && entry.expression && entry.result !== undefined) {
+                const entryDiv = document.createElement('div');
+                entryDiv.textContent = `${entry.expression} = ${entry.result}`;
+                fragment.appendChild(entryDiv);
+            }
+        });
+        historyContent.innerHTML = '';
+        historyContent.appendChild(fragment);
     }
 
     // Event listeneer for history toggle button
@@ -183,15 +182,41 @@ function clearHistory() {
 }
 
 // Event listener for clearing history
-clearHistoryButton.addEventListener('click', clearHistory);
+clearHistoryButton.addEventListener('click', () => {
+    if (confirm('Are ypu sure you want to clear the history?')) {
+        clearHistory();
+    }
+});
 
 // Call loadHistory when the page loads
 loadHistory();
 
 // Function to menu-toggle
 menuToggleButton.addEventListener('click', () =>{
-    menuContent.classList.toggle('show');
+    if (menuContent.classList.contains('hidden')) {
+        menuContent.classList.remove('hidden');
+        menuContent.classList.add('show');
+    } else {
+        menuContent.classList.remove('show');
+        menuContent.classList.add('hidden');
+    }
+});
+
+// function to show keyboard shortcuts
+keyboardShortcutsBtn.addEventListener('click', () => {
+    keyboardShortcuts.classList.toggle('hidden');
+    keyboardShortcuts.classList.toggle('show');
 })
+
+// Close the menu when clicking outside
+document.addEventListener('click', (event) => {
+    if (!menuContent.contains(event.target) && !menuToggleButton.contains(event.target)) {
+        menuContent.classList.remove('show');
+        menuContent.classList.add('hidden');
+        keyboardShortcuts.classList.add('hidden');
+        keyboardShortcuts.classList.remove('show');
+    }
+});
 
      // Function to display check
         checkButton.addEventListener('click', function() {

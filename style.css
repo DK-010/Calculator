@@ -113,6 +113,7 @@ body.dark-mode {
 .menu-container {
     position: absolute;
     top: 15px;
+    margin-left: 20px;
     right: 20px;
     z-index: 150;
 }
@@ -122,71 +123,134 @@ body.dark-mode {
     height: 30px;
     padding: 0;
     border: none;
-    border-radius: 50%;
     font-size: 20px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: transparent;
+    color: #007bff;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    outline: none;
+    box-shadow: none;
 }
 
-.menu-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
+.menu-button:hover,
+.menu-button:focus,
+.menu-button:active {
+    color: #007bff;
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+    border: none;
 }
 
 .menu-content {
-    position: fixed;
-    top: 60px;
-    right: 10px;
+    position: absolute ;
+    top: 40px;
+    right: 0;
     width: 200px;
     background-color: rgba(255, 255, 255, 0.9);
-    color: #000;
-    border: 1px solid rgba(221, 221, 221, 0.7);
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    box-sizing: border-box;
-    z-index: 100;
-    display: none;
-    backdrop-filter: blur(10px);
+    color: #333;
+    visibility: hidden;
+    opacity: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 200;
+    transition: visibility 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    border-radius: 10px;
 }
 
-.menu-content h3 {
-    margin: 0 0 10px 0;
-    font-size: 18px;
-    font-weight: bold;
+.menu-content.hidden {
+    visibility: hidden;
+    opacity: 0;
 }
 
-.menu-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu-content li {
-    margin: 5px 0;
-}
-
-/* Show Menu */
 .menu-content.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.menu-panel {
+    width: 100%;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.menu-item {
+    width: 100%;
+    padding: 8px;
+    background-color: transparent;
+    color: #007bff;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #007bff;
+}
+
+.menu-item:hover {
+    color: #007bff;
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid #007bff;
+}
+
+.shortcuts.hidden {
+    display: none;
+}
+
+.shortcuts.show {
     display: block;
 }
 
-/* Dark mode Menu Styles */
 body.dark-mode .menu-content {
-    background-color: rgba(51, 51, 51, 0.9);
     color: #fff;
-    border-color: rgba(136, 136, 136, 0.7);
+}
+
+body.dark-mode .menu-item {
+    background-color: rgba(75, 75, 75, 0.9);
+    color: #fff;
 }
 
 body.dark-mode .menu-button {
-    background-color: rgba(0, 123, 255, 0.8);
     color: #fff;
+}
+
+.shortcuts {
+    background-color: transparent;
+    color: #333;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+body.dark-mode .shortcuts {
+    background-color: rgba(75, 75, 75, 0.9);
+    color: #fff;
+}
+
+.shortcuts ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.shortcuts ul li {
+    font-size: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #007bff;
+    cursor: default;
+}
+
+body.dark-mode .shortcuts ul li {
+    color: #fff;
+    border-bottom: 1px solid #fff;
 }
 
 /* History View Styles */
